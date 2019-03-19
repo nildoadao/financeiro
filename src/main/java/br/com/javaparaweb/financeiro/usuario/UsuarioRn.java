@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import br.com.javaparaweb.financeiro.categoria.CategoriaRn;
 import br.com.javaparaweb.financeiro.util.DaoFactory;
 
 public class UsuarioRn {
@@ -33,6 +34,8 @@ public class UsuarioRn {
 			usuario.setSenha(hash);
 			usuario.getPermissao().add("ROLE_USUARIO");
 			usuarioDao.salvar(usuario);
+			CategoriaRn categoriaRn = new CategoriaRn();
+			categoriaRn.salvaEstruturaPadrao(usuario);
 		}
 			
 		else
@@ -40,6 +43,8 @@ public class UsuarioRn {
 	}
 	
 	public void excluir(Usuario usuario) {
+		CategoriaRn categoriaRn = new CategoriaRn();
+		categoriaRn.excluir(usuario);
 		usuarioDao.excluir(usuario);
 	}
 	

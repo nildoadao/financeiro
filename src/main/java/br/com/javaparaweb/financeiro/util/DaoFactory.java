@@ -1,5 +1,7 @@
 package br.com.javaparaweb.financeiro.util;
 
+import br.com.javaparaweb.financeiro.categoria.CategoriaDao;
+import br.com.javaparaweb.financeiro.categoria.CategoriaDaoHibernate;
 import br.com.javaparaweb.financeiro.conta.ContaDao;
 import br.com.javaparaweb.financeiro.conta.ContaDaoHibernate;
 import br.com.javaparaweb.financeiro.usuario.UsuarioDao;
@@ -17,5 +19,11 @@ public class DaoFactory {
 		ContaDaoHibernate contaDao = new ContaDaoHibernate();
 		contaDao.setSession(HibernateUtil.getSessionFactory().getCurrentSession());
 		return contaDao;
+	}
+	
+	public static CategoriaDao criarCategoriaDao() {
+		CategoriaDaoHibernate categoriaDao = new CategoriaDaoHibernate();
+		categoriaDao.SetSession(HibernateUtil.getSessionFactory().getCurrentSession());
+		return categoriaDao;
 	}
 }

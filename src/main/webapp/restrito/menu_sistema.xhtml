@@ -11,7 +11,7 @@
 					<tr>
 						<td>
 							<h:commandButton value="Conta" action="/restrito/conta"/>
-				
+							<h:commandButton value="Categorias" action="/restrito/categoria"/>
 							<h:selectOneMenu value="#{contextoBean.contaAtiva.conta}"
 								valueChangeListener="#{contextoBean.changeContaAtiva}"
 								rendered="#{not empty contextoBean and not empty contextoBean.contaAtiva}"
