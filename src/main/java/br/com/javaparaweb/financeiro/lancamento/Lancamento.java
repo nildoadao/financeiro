@@ -3,12 +3,24 @@ package br.com.javaparaweb.financeiro.lancamento;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import br.com.javaparaweb.financeiro.categoria.Categoria;
+import br.com.javaparaweb.financeiro.cheque.Cheque;
 import br.com.javaparaweb.financeiro.conta.Conta;
 import br.com.javaparaweb.financeiro.usuario.Usuario;
 
@@ -47,10 +59,24 @@ public class Lancamento {
 	
 	@Column(precision = 10, scale = 2)
 	private BigDecimal valor;
+	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "lancamento")
+	private Cheque cheque;
 
 	public Integer getCodigo() {
 		return codigo;
 	}
+
+	
+	public Cheque getCheque() {
+		return cheque;
+	}
+
+
+	public void setCheque(Cheque cheque) {
+		this.cheque = cheque;
+	}
+
 
 	public void setCodigo(Integer codigo) {
 		this.codigo = codigo;
@@ -104,11 +130,13 @@ public class Lancamento {
 		this.valor = valor;
 	}
 
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((categoria == null) ? 0 : categoria.hashCode());
+		result = prime * result + ((cheque == null) ? 0 : cheque.hashCode());
 		result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
 		result = prime * result + ((conta == null) ? 0 : conta.hashCode());
 		result = prime * result + ((data == null) ? 0 : data.hashCode());
@@ -122,64 +150,51 @@ public class Lancamento {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		
 		if (obj == null)
 			return false;
-		
 		if (getClass() != obj.getClass())
 			return false;
-		
 		Lancamento other = (Lancamento) obj;
-		
 		if (categoria == null) {
 			if (other.categoria != null)
 				return false;
-			
 		} else if (!categoria.equals(other.categoria))
 			return false;
-		
+		if (cheque == null) {
+			if (other.cheque != null)
+				return false;
+		} else if (!cheque.equals(other.cheque))
+			return false;
 		if (codigo == null) {
 			if (other.codigo != null)
 				return false;
-			
 		} else if (!codigo.equals(other.codigo))
 			return false;
-		
 		if (conta == null) {
 			if (other.conta != null)
 				return false;
-			
 		} else if (!conta.equals(other.conta))
 			return false;
-		
 		if (data == null) {
 			if (other.data != null)
 				return false;
-			
 		} else if (!data.equals(other.data))
 			return false;
-		
 		if (descricao == null) {
 			if (other.descricao != null)
 				return false;
-			
 		} else if (!descricao.equals(other.descricao))
 			return false;
-		
 		if (usuario == null) {
 			if (other.usuario != null)
 				return false;
-			
 		} else if (!usuario.equals(other.usuario))
 			return false;
-		
 		if (valor == null) {
 			if (other.valor != null)
 				return false;
-			
 		} else if (!valor.equals(other.valor))
 			return false;
-		
 		return true;
 	}
 	

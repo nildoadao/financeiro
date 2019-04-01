@@ -25,5 +25,6 @@
 		<mapping class = "br.com.javaparaweb.financeiro.conta.Conta"/>
 		<mapping class = "br.com.javaparaweb.financeiro.categoria.Categoria"/>
 		<mapping class = "br.com.javaparaweb.financeiro.lancamento.Lancamento"/>
+		<mapping class = "br.com.javaparaweb.financeiro.cheque.Cheque"/>
 	</session-factory>
 </hibernate-configuration>
