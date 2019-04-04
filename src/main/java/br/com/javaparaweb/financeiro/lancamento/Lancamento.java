@@ -11,7 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -60,7 +60,7 @@ public class Lancamento {
 	@Column(precision = 10, scale = 2)
 	private BigDecimal valor;
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "lancamento")
+	@OneToOne(fetch = FetchType.LAZY, mappedBy = "lancamento")
 	private Cheque cheque;
 
 	public Integer getCodigo() {
