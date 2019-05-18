@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.javaparaweb.financeiro.usuario.Usuario;
+import br.com.javaparaweb.financeiro.util.AlphaVantageUtil;
 import br.com.javaparaweb.financeiro.util.DaoFactory;
 import br.com.javaparaweb.financeiro.util.UtilException;
 
@@ -36,8 +37,10 @@ public class AcaoRn {
 		for(Acao acao : this.listar(usuario)) {
 			acaoVirtual = new AcaoVirtual();
 			acaoVirtual.setAcao(acao);
-			cotacao = AlphaVantageUtil.getInfoCotacao(
-					AlphaVantageUtil.INDICE_ULTIMO_PRECO_DIA_ACAO, acao);
+			try {
+				cotacao = AlphaVantageUtil.getInfoCotacao(acao);
+			}catch(Exception e) {}
+
 			if(cotacao != null) {
 				ultimoPreco = new Float(cotacao).floatValue();
 				acaoVirtual.setUltimoPreco(ultimoPreco);

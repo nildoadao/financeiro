@@ -91,5 +91,17 @@
   		<artifactId>primefaces</artifactId>
   		<version>5.0</version>
   	</dependency>
+  	<!-- Http Client -->
+  	<dependency>
+  		<groupId>org.apache.httpcomponents</groupId>
+  		<artifactId>httpclient</artifactId>
+  		<version>4.5.2</version>
+  	</dependency>
+  	<!-- Org.Jso -->
+  	<dependency>
+    	<groupId>org.json</groupId>
+    	<artifactId>json</artifactId>
+    	<version>20180813</version>
+	</dependency>
   </dependencies>
 </project>
