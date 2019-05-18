@@ -39,7 +39,9 @@ public class AcaoRn {
 			acaoVirtual.setAcao(acao);
 			try {
 				cotacao = AlphaVantageUtil.getInfoCotacao(acao);
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				throw new UtilException(e.getMessage());
+			}
 
 			if(cotacao != null) {
 				ultimoPreco = new Float(cotacao).floatValue();

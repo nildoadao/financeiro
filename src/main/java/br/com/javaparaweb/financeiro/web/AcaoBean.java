@@ -1,6 +1,12 @@
 package br.com.javaparaweb.financeiro.web;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -8,6 +14,11 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
 
+import org.primefaces.model.chart.Axis;
+import org.primefaces.model.chart.AxisType;
+import org.primefaces.model.chart.CategoryAxis;
+import org.primefaces.model.chart.LineChartModel;
+import org.primefaces.model.chart.LineChartSeries;
 import org.primefaces.model.chart.PieChartModel;
 
 import br.com.javaparaweb.financeiro.bolsa.acao.Acao;
@@ -19,11 +30,14 @@ import br.com.javaparaweb.financeiro.util.AlphaVantageUtil;
 @RequestScoped
 public class AcaoBean {
 	
+	private static final Logger log = Logger.getLogger(AcaoBean.class.getName());
 	private AcaoVirtual selecionada = new AcaoVirtual();
 	private List<AcaoVirtual> lista = null;
+	private SortedMap<Date, String> valoresDiario = null;
 	private String linkCodigoAcao = null;
 	private PieChartModel percentualQuantidade = new PieChartModel();
 	private PieChartModel percentualValor = new PieChartModel();
+	private LineChartModel variacaoDiaria = new LineChartModel();
 	
 	@ManagedProperty(value = "#{contextoBean}")
 	private ContextoBean contextoBean;
@@ -91,6 +105,58 @@ public class AcaoBean {
 		}
 		return this.percentualValor;
 	}
+	
+	public LineChartModel getVariacaoDiaria() {
+		
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		try {
+			SortedMap<Date, String> valores = this.getValoresDiario();		
+			LineChartSeries serieGrafico = new LineChartSeries("Variação Diaria");
+			serieGrafico.setFill(true);
+			
+			for(Date data : valores.keySet()) {
+				serieGrafico.set(new SimpleDateFormat("HH:mm").format(data), 
+						new Float(valores.get(data)).floatValue());
+			}
+			
+			this.variacaoDiaria.setTitle(this.getLinkCodigoAcao());
+			this.variacaoDiaria.setLegendPosition("ne");
+			this.variacaoDiaria.setStacked(true);
+			this.variacaoDiaria.addSeries(serieGrafico);
+			
+	        Axis xAxis = new CategoryAxis("Hora");
+	        this.variacaoDiaria.getAxes().put(AxisType.X, xAxis);
+	        Axis yAxis = this.variacaoDiaria.getAxis(AxisType.Y);
+	        yAxis.setLabel("Valor");
+
+			
+		}catch(Exception e) {
+			log.severe(e.getMessage());
+			context.addMessage(null, new FacesMessage(e.getMessage()));
+		}
+		
+		return variacaoDiaria;
+	}
+	
+	public SortedMap<Date, String> getValoresDiario() {
+		
+		if(this.valoresDiario == null) {
+			log.log(Level.INFO, "Obtendo dados da API AlphaVantage");
+			try {
+				valoresDiario = new TreeMap<Date, String>(AlphaVantageUtil.getVariacaoDiaria(this.selecionada.getAcao()));
+			}catch(Exception e) {}
+		}
+		return this.valoresDiario;
+	}
+
+	public void setValoresDiario(SortedMap<Date, String> valoresDiario) {
+		this.valoresDiario = valoresDiario;
+	}
+
+	public void setVariacaoDiaria(LineChartModel variacaoDiaria) {
+		this.variacaoDiaria = variacaoDiaria;
+	}
 
 	public AcaoVirtual getSelecionada() {
 		return selecionada;
@@ -98,6 +164,7 @@ public class AcaoBean {
 
 	public void setSelecionada(AcaoVirtual selecionada) {
 		this.selecionada = selecionada;
+		this.valoresDiario = null;
 	}
 
 	public ContextoBean getContextoBean() {
