@@ -63,6 +63,17 @@ public class CategoriaBean {
 		return null;
 	}
 	
+	public String excluir() {
+		CategoriaRn categoriaRn = new CategoriaRn();
+		categoriaRn.excluir(this.editada);
+		
+		this.editada = null;
+		this.mostraEdicao = false;
+		this.categoriasTree = null;
+		this.categoriasSelect = null;
+		return null;
+	}
+	
 	public TreeNode getCategoriasTree() {
 		
 		if(this.categoriasTree == null) {

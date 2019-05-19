@@ -5,8 +5,9 @@ import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -55,7 +56,7 @@ public class AlphaVantageUtil {
 					.getString("05. price");
 			
 		}catch(Exception e) {
-			throw new UtilException(e.getMessage());
+			throw new UtilException("Falha ao obter dados de Alpha Vantage");
 		}finally {
 			httpGet.releaseConnection();
 		}		
@@ -76,7 +77,7 @@ public class AlphaVantageUtil {
 	public static Map<Date, String> getVariacaoDiaria(Acao acao) throws URISyntaxException, UtilException{
 		
 		String sigla = getSiglaLink(acao);		
-		Map<Date, String> valores = new LinkedHashMap<Date, String>();
+		SortedMap<Date, String> valores = new TreeMap<Date, String>();
 		
 		URI uri = new URIBuilder()
 					.setScheme("https")
@@ -100,24 +101,104 @@ public class AlphaVantageUtil {
 			JSONObject cotacoes = (JSONObject) json.get("Time Series (5min)");
 			Iterator<String> iterator = cotacoes.keys();
 			String key = null;
-			int contador = 0;
-			
-			while(contador < 10) {
+						
+			while(iterator.hasNext()) {
 				key = (String) iterator.next();
 				Date data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(key);		
 				
 				valores.put(data, json.getJSONObject("Time Series (5min)").
 						getJSONObject(key).getString("4. close"));
-				
-				contador++;
 			}
-
 			
 		}catch(Exception e) {
-			throw new UtilException(e.getMessage());
+			throw new UtilException("Falha ao obter dados de Alpha Vantage");
 		}finally {
 			httpGet.releaseConnection();
 		}		
 		return valores;			
+	}
+	
+	public static Map<Date, String> getVariacaoSemanal(Acao acao) throws URISyntaxException, UtilException{
+		String sigla = getSiglaLink(acao);		
+		SortedMap<Date, String> valores = new TreeMap<Date, String>();
+		
+		URI uri = new URIBuilder()
+					.setScheme("https")
+					.setHost("www.alphavantage.co/query")
+					.addParameter("function", "TIME_SERIES_WEEKLY")
+					.addParameter("symbol", sigla)
+					.addParameter("apikey", KEY)
+					.build();
+		
+		HttpGet httpGet = new HttpGet(uri);
+		
+		try {
+			HttpResponse response = client.execute(httpGet);
+			
+			if(response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) 
+				throw new UtilException("Falha ao se comunicar com a API Alpha Vantage.");
+			
+			String content = EntityUtils.toString(response.getEntity());
+			JSONObject json = new JSONObject(content);
+			JSONObject cotacoes = (JSONObject) json.get("Weekly Time Series");
+			Iterator<String> iterator = cotacoes.keys();
+			String key = null;
+						
+			while(iterator.hasNext()) {
+				key = (String) iterator.next();
+				Date data = new SimpleDateFormat("yyyy-MM-dd").parse(key);		
+				
+				valores.put(data, json.getJSONObject("Weekly Time Series").
+						getJSONObject(key).getString("4. close"));
+			}
+			
+		}catch(Exception e) {
+			throw new UtilException("Falha ao obter dados de Alpha Vantage");
+		}finally {
+			httpGet.releaseConnection();
+		}		
+		return valores;	
+	}
+	
+	public static Map<Date, String> getVariacaoMensal(Acao acao) throws URISyntaxException, UtilException{
+		String sigla = getSiglaLink(acao);		
+		SortedMap<Date, String> valores = new TreeMap<Date, String>();
+		
+		URI uri = new URIBuilder()
+					.setScheme("https")
+					.setHost("www.alphavantage.co/query")
+					.addParameter("function", "TIME_SERIES_MONTHLY")
+					.addParameter("symbol", sigla)
+					.addParameter("apikey", KEY)
+					.build();
+		
+		HttpGet httpGet = new HttpGet(uri);
+		
+		try {
+			HttpResponse response = client.execute(httpGet);
+			
+			if(response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) 
+				throw new UtilException("Falha ao se comunicar com a API Alpha Vantage.");
+			
+			String content = EntityUtils.toString(response.getEntity());
+			JSONObject json = new JSONObject(content);
+			JSONObject cotacoes = (JSONObject) json.get("Monthly Time Series");
+			Iterator<String> iterator = cotacoes.keys();
+			String key = null;
+						
+			while(iterator.hasNext()) {
+				key = (String) iterator.next();
+				Date data = new SimpleDateFormat("yyyy-MM-dd").parse(key);		
+				
+				valores.put(data, json.getJSONObject("Monthly Time Series").
+						getJSONObject(key).getString("4. close"));
+			}
+			
+		}catch(Exception e) {
+			throw new UtilException("Falha ao obter dados de Alpha Vantage");
+		}finally {
+			httpGet.releaseConnection();
+		}		
+		return valores;	
 	}
 }

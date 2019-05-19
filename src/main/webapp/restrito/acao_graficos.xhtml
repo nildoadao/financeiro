@@ -8,16 +8,19 @@
 			<p:tabView>
 				<p:tab title="Gráfico Diário">
 					<p:chart type="line" model="#{acaoBean.variacaoDiaria}" 
-					style="width:500px; heigth:200px"/>
+						style="width:500px; heigth:200px"/>
 				</p:tab>
 				<p:tab title="Gráfico Trimestral">
-					<h:graphicImage value=""/>
+					<p:chart type="line" model="#{acaoBean.variacaoTrimestral}" 
+						style="width:500px; heigth:200px"/>
 				</p:tab>
 				<p:tab title="Gráfico Semestral">
-					<h:graphicImage value=""/>
+					<p:chart type="line" model="#{acaoBean.variacaoSemestral}" 
+						style="width:500px; heigth:200px"/>
 				</p:tab>
 				<p:tab title="Gráfico Anual">
-					<h:graphicImage value=""/>
+					<p:chart type="line" model="#{acaoBean.variacaoAnual}" 
+						style="width:500px; heigth:200px"/>
 				</p:tab>
 			</p:tabView>
 		</h:panelGrid>

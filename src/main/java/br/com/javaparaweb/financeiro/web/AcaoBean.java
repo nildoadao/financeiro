@@ -34,10 +34,16 @@ public class AcaoBean {
 	private AcaoVirtual selecionada = new AcaoVirtual();
 	private List<AcaoVirtual> lista = null;
 	private SortedMap<Date, String> valoresDiario = null;
+	private SortedMap<Date, String> valoresTrimestral = null;
+	private SortedMap<Date, String> valoresSemestral = null;
+	private SortedMap<Date, String> valoresAnual = null;
 	private String linkCodigoAcao = null;
 	private PieChartModel percentualQuantidade = new PieChartModel();
 	private PieChartModel percentualValor = new PieChartModel();
 	private LineChartModel variacaoDiaria = new LineChartModel();
+	private LineChartModel variacaoTrimestral = new LineChartModel();
+	private LineChartModel variacaoSemestral = new LineChartModel();
+	private LineChartModel variacaoAnual = new LineChartModel();
 	
 	@ManagedProperty(value = "#{contextoBean}")
 	private ContextoBean contextoBean;
@@ -106,18 +112,22 @@ public class AcaoBean {
 		return this.percentualValor;
 	}
 	
-	public LineChartModel getVariacaoDiaria() {
-		
+	public LineChartModel getVariacaoDiaria() {		
 		FacesContext context = FacesContext.getCurrentInstance();
 		
 		try {
 			SortedMap<Date, String> valores = this.getValoresDiario();		
 			LineChartSeries serieGrafico = new LineChartSeries("Variação Diaria");
-			serieGrafico.setFill(true);
+			int contador = 0;
 			
-			for(Date data : valores.keySet()) {
-				serieGrafico.set(new SimpleDateFormat("HH:mm").format(data), 
-						new Float(valores.get(data)).floatValue());
+			for(Date data : valores.keySet()) {				
+				contador++;
+				
+				// considera apenas as ultimas 10 medições
+				if(contador > valores.size() - 10) {
+					serieGrafico.set(new SimpleDateFormat("HH:mm").format(data), 
+							new Float(valores.get(data)).floatValue());
+				}			
 			}
 			
 			this.variacaoDiaria.setTitle(this.getLinkCodigoAcao());
@@ -126,6 +136,7 @@ public class AcaoBean {
 			this.variacaoDiaria.addSeries(serieGrafico);
 			
 	        Axis xAxis = new CategoryAxis("Hora");
+	        xAxis.setTickAngle(60);
 	        this.variacaoDiaria.getAxes().put(AxisType.X, xAxis);
 	        Axis yAxis = this.variacaoDiaria.getAxis(AxisType.Y);
 	        yAxis.setLabel("Valor");
@@ -139,6 +150,122 @@ public class AcaoBean {
 		return variacaoDiaria;
 	}
 	
+	
+	public LineChartModel getVariacaoTrimestral() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		try {
+			SortedMap<Date, String> valores = this.getValoresTrimestral();		
+			LineChartSeries serieGrafico = new LineChartSeries("Variação Trimestral");
+			int contador = 0;
+			
+			for(Date data : valores.keySet()) {				
+				contador++;
+				
+				// considera apenas as ultimas 12 medições
+				if(contador > valores.size() - 12) {
+					serieGrafico.set(new SimpleDateFormat("dd/MM").format(data), 
+							new Float(valores.get(data)).floatValue());
+				}			
+			}
+			
+			this.variacaoTrimestral.setTitle(this.getLinkCodigoAcao());
+			this.variacaoTrimestral.setLegendPosition("ne");
+			this.variacaoTrimestral.setStacked(true);
+			this.variacaoTrimestral.addSeries(serieGrafico);
+			
+	        Axis xAxis = new CategoryAxis("Dia");
+	        xAxis.setTickAngle(60);
+	        this.variacaoTrimestral.getAxes().put(AxisType.X, xAxis);
+	        Axis yAxis = this.variacaoTrimestral.getAxis(AxisType.Y);
+	        yAxis.setLabel("Valor");
+
+			
+		}catch(Exception e) {
+			log.severe(e.getMessage());
+			context.addMessage(null, new FacesMessage(e.getMessage()));
+		}
+		
+		return variacaoTrimestral;
+	}
+
+	public LineChartModel getVariacaoSemestral() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		try {
+			SortedMap<Date, String> valores = this.getValoresSemestral();		
+			LineChartSeries serieGrafico = new LineChartSeries("Variação Semestral");
+			int contador = 0;
+			
+			for(Date data : valores.keySet()) {				
+				contador++;
+				
+				// considera apenas as ultimas 6 medições
+				if(contador > valores.size() - 6) {
+					serieGrafico.set(new SimpleDateFormat("MM/yy").format(data), 
+							new Float(valores.get(data)).floatValue());
+				}
+				
+			}
+			
+			this.variacaoSemestral.setTitle(this.getLinkCodigoAcao());
+			this.variacaoSemestral.setLegendPosition("ne");
+			this.variacaoSemestral.setStacked(true);
+			this.variacaoSemestral.addSeries(serieGrafico);
+			
+	        Axis xAxis = new CategoryAxis("Mês");
+	        xAxis.setTickAngle(60);
+	        this.variacaoSemestral.getAxes().put(AxisType.X, xAxis);
+	        Axis yAxis = this.variacaoSemestral.getAxis(AxisType.Y);
+	        yAxis.setLabel("Valor");
+
+			
+		}catch(Exception e) {
+			log.severe(e.getMessage());
+			context.addMessage(null, new FacesMessage(e.getMessage()));
+		}
+		
+		return variacaoSemestral;
+	}
+
+	public LineChartModel getVariacaoAnual() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		try {
+			SortedMap<Date, String> valores = this.getValoresAnual();		
+			LineChartSeries serieGrafico = new LineChartSeries("Variação Anual");
+			int contador = 0;
+			
+			for(Date data : valores.keySet()) {				
+				contador++;
+				
+				// considera apenas as ultimas 12 medições
+				if(contador > valores.size() - 12) {
+					serieGrafico.set(new SimpleDateFormat("MM/yy").format(data), 
+							new Float(valores.get(data)).floatValue());
+				}			
+			}
+			
+			this.variacaoAnual.setTitle(this.getLinkCodigoAcao());
+			this.variacaoAnual.setLegendPosition("ne");
+			this.variacaoAnual.setStacked(true);
+			this.variacaoAnual.addSeries(serieGrafico);
+			
+	        Axis xAxis = new CategoryAxis("Mês");
+	        xAxis.setTickAngle(60);
+	        this.variacaoAnual.getAxes().put(AxisType.X, xAxis);
+	        Axis yAxis = this.variacaoAnual.getAxis(AxisType.Y);
+	        yAxis.setLabel("Valor");
+
+			
+		}catch(Exception e) {
+			log.severe(e.getMessage());
+			context.addMessage(null, new FacesMessage(e.getMessage()));
+		}
+		
+		return variacaoAnual;
+	}
+
 	public SortedMap<Date, String> getValoresDiario() {
 		
 		if(this.valoresDiario == null) {
@@ -148,6 +275,37 @@ public class AcaoBean {
 			}catch(Exception e) {}
 		}
 		return this.valoresDiario;
+	}
+	
+	
+	public SortedMap<Date, String> getValoresTrimestral() {
+		if(this.valoresTrimestral == null) {
+			log.log(Level.INFO, "Obtendo dados da API AlphaVantage");
+			try {
+				valoresTrimestral = new TreeMap<Date, String>(AlphaVantageUtil.getVariacaoSemanal(this.selecionada.getAcao()));
+			}catch(Exception e) {}
+		}
+		return this.valoresTrimestral;
+	}
+
+	public SortedMap<Date, String> getValoresSemestral() {
+		if(this.valoresSemestral == null) {
+			log.log(Level.INFO, "Obtendo dados da API AlphaVantage");
+			try {
+				valoresSemestral = new TreeMap<Date, String>(AlphaVantageUtil.getVariacaoMensal(this.selecionada.getAcao()));
+			}catch(Exception e) {}
+		}
+		return this.valoresSemestral;
+	}
+
+	public SortedMap<Date, String> getValoresAnual() {
+		if(this.valoresAnual == null) {
+			log.log(Level.INFO, "Obtendo dados da API AlphaVantage");
+			try {
+				valoresAnual = new TreeMap<Date, String>(AlphaVantageUtil.getVariacaoMensal(this.selecionada.getAcao()));
+			}catch(Exception e) {}
+		}
+		return this.valoresAnual;
 	}
 
 	public void setValoresDiario(SortedMap<Date, String> valoresDiario) {
