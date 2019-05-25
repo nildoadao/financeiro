@@ -1,11 +1,13 @@
 package br.com.javaparaweb.financeiro.bolsa.acao;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
 import br.com.javaparaweb.financeiro.usuario.Usuario;
 import br.com.javaparaweb.financeiro.util.AlphaVantageUtil;
 import br.com.javaparaweb.financeiro.util.DaoFactory;
+import br.com.javaparaweb.financeiro.util.RNException;
 import br.com.javaparaweb.financeiro.util.UtilException;
 
 public class AcaoRn {
@@ -28,7 +30,7 @@ public class AcaoRn {
 		return acaoDao.listar(usuario);
 	}
 	
-	public List<AcaoVirtual> listarAcaoVirtual(Usuario usuario) throws UtilException{
+	public List<AcaoVirtual> listarAcaoVirtual(Usuario usuario) throws UtilException, RNException, URISyntaxException{
 		List<AcaoVirtual> listaAcaoVirtual = new ArrayList<AcaoVirtual>();
 		AcaoVirtual acaoVirtual = null;
 		String cotacao = null;
@@ -39,8 +41,8 @@ public class AcaoRn {
 			acaoVirtual.setAcao(acao);
 			try {
 				cotacao = AlphaVantageUtil.getInfoCotacao(acao);
-			}catch(Exception e) {
-				throw new UtilException(e.getMessage());
+			}catch(UtilException e) {
+				throw new RNException(e);
 			}
 
 			if(cotacao != null) {
