@@ -123,8 +123,8 @@ public class AcaoBean {
 			for(Date data : valores.keySet()) {				
 				contador++;
 				
-				// considera apenas as ultimas 10 medições
-				if(contador > valores.size() - 10) {
+				// considera apenas as ultimas 15 medições
+				if(contador > valores.size() - 15) {
 					serieGrafico.set(new SimpleDateFormat("HH:mm").format(data), 
 							new Float(valores.get(data)).floatValue());
 				}			
